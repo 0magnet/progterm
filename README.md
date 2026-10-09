@@ -87,10 +87,6 @@ Not yet:
 - **Shipping the binary:** the host page is built locally by `make`, not
   committed, so `go install` alone does not give a working binary yet.
 
-Known issue: with the native `progdemo`, a few stray cells are left beside a
-half-block picture. kitty draws the same program cleanly, so the fault is in
-how xterm-go handles something tcell sends. It is being looked into.
-
 ## License
 
 MIT.

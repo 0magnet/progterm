@@ -1,0 +1,96 @@
+# progterm
+
+A desktop terminal that is a **progressive terminal host**: your own shell, on
+a real pty on this machine, drawn by [websh](https://github.com/0magnet/websh)'s
+host in a browser app window.
+
+Native programs run as they do in any terminal: vim, htop, ssh, git, whatever
+your shell runs. A *progressive* terminal program, one that asks its terminal
+what it offers ([websh's PROTOCOL.md](https://github.com/0magnet/websh/blob/main/PROTOCOL.md)),
+gets more here than in a desktop terminal:
+- **real pictures over its cells** (kitty's graphics protocol);
+- **widgets it ships itself**: HTML or wasm, run in a sandboxed iframe, talking
+  to the program both ways over its own output and input;
+- **an accessible rendition** of what it shows, for screen readers;
+- **sound, notifications, the clipboard and file drops.**
+
+The same program, unchanged, falls back to cells in a terminal that offers none
+of that.
+
+```sh
+make build        # builds the host page (wasm) and the binary that embeds it
+./progterm        # opens a window with your shell
+```
+
+`websh/cmd/progdemo` built natively is the program to try in it: it shows each
+capability beside what it does where a terminal cannot.
+
+## How it works
+
+`progterm` starts one HTTP server on a loopback address. It serves the host
+page, which is websh's host built to wasm and embedded in the binary, and opens
+it as an app window: a Chromium-family browser's `--app`, which has no address
+bar or tabs. The page connects back over a WebSocket, and the bridge starts
+your shell (`$SHELL -l`) on a pty for it. Binary messages carry the pty's bytes
+both ways, and a text message carries the window's size. Each window is its own
+shell, and the bridge exits when the last one does.
+
+`TERM` is `xterm-256color` and `TERM_PROGRAM` is `progterm`.
+
+## Safety
+
+The window is a shell on your machine, so only the page progterm opened may
+reach it:
+- the server listens on loopback only, and refuses a non-loopback `-addr`;
+- each launch makes a random 256-bit token, carried in the window's link
+  *fragment*, which no HTTP request includes, and removed from the address
+  once read;
+- the pty endpoint requires the token and an `Origin` of the page's own;
+- every request must name the server's own `Host`, which stops a page
+  elsewhere from reaching it by pointing a DNS name at 127.0.0.1.
+
+## Trust
+
+The host cannot see whether the bytes on the pty are this machine's or those of
+an ssh session running inside your shell. No desktop terminal can. So progterm's
+output gets websh's **remote** rules, and programs are told so in their
+`caps?` reply:
+- it may not change the font or the page;
+- a clipboard write or a file it offers asks you first;
+- notifications are rate-limited.
+
+It may set the window's title, as every desktop terminal lets output do. In
+websh's terms this is the `terminal` source (PROTOCOL.md, Trust).
+
+## Flags
+
+| Flag | |
+|---|---|
+| `-shell` | the shell to run (default `$SHELL`, else `/bin/sh`) |
+| `-browser` | the browser to open the window with (default: the first of brave, chromium, google-chrome, microsoft-edge on `PATH`, else `xdg-open`) |
+| `-no-open` | print the window's address instead of opening it |
+| `-addr` | the loopback address to serve on (default `127.0.0.1:0`, any free port) |
+
+## Status
+
+Verified on Linux, in Brave:
+- **a real shell on a pty:** `tty`, size changes, and `TERM_PROGRAM`;
+- **window titles** from the shell;
+- **the guards:** a wrong `Host` and a missing token are both refused;
+- **the native `progdemo` running in it:** discovery reports the remote trust
+  level; the picture is drawn sharply over its cells; and the shipped slider
+  drives the program's cells.
+
+Not yet:
+- **Other platforms:** macOS (the pty library supports it, but it is untested)
+  and Windows (no pty here; ConPTY would be needed).
+- **Shipping the binary:** the host page is built locally by `make`, not
+  committed, so `go install` alone does not give a working binary yet.
+
+Known issue: with the native `progdemo`, a few stray cells are left beside a
+half-block picture. kitty draws the same program cleanly, so the fault is in
+how xterm-go handles something tcell sends. It is being looked into.
+
+## License
+
+MIT.

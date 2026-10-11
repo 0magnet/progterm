@@ -41,7 +41,7 @@ shell, and the bridge exits when the last one does.
 
 The window is a shell on your machine, so only the page progterm opened may
 reach it:
-- the server listens on loopback only, and refuses a non-loopback `-addr`;
+- the server listens on loopback only, and refuses a non-loopback `--addr`;
 - each launch makes a random 256-bit token, carried in the window's link
   *fragment*, which no HTTP request includes, and removed from the address
   once read;
@@ -66,10 +66,10 @@ websh's terms this is the `terminal` source (PROTOCOL.md, Trust).
 
 | Flag | |
 |---|---|
-| `-shell` | the shell to run (default `$SHELL`, else `/bin/sh`) |
-| `-browser` | the browser to open the window with (default: the first of brave, chromium, google-chrome, microsoft-edge on `PATH`, else `xdg-open`) |
-| `-no-open` | print the window's address instead of opening it |
-| `-addr` | the loopback address to serve on (default `127.0.0.1:0`, any free port) |
+| `--shell` | the shell to run (default `$SHELL`, else `/bin/sh`) |
+| `--browser` | the browser to open the window with (default: the first of brave, chromium, google-chrome, microsoft-edge on `PATH`, else `xdg-open`) |
+| `--no-open` | print the window's address instead of opening it |
+| `--addr` | the loopback address to serve on (default `127.0.0.1:0`, any free port) |
 
 ## Status
 

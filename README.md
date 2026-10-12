@@ -66,7 +66,7 @@ websh's terms this is the `terminal` source (PROTOCOL.md, Trust).
 
 | Flag | |
 |---|---|
-| `--shell` | the shell to run (default `$SHELL`, else `/bin/sh`) |
+| `--shell` | the shell to run (default `$SHELL`, else `/bin/sh`); `--shell websh` runs [websh](https://github.com/0magnet/websh) itself on this machine |
 | `--browser` | the browser to open the window with (default: the first of brave, chromium, google-chrome, microsoft-edge on `PATH`, else `xdg-open`) |
 | `--no-open` | print the window's address instead of opening it |
 | `--addr` | the loopback address to serve on (default `127.0.0.1:0`, any free port) |

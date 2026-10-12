@@ -5,7 +5,7 @@ go 1.27.1
 require (
 	github.com/0magnet/calvin v0.0.1-0.20261011231802-9b916a31f7b1
 	github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5
-	github.com/0magnet/websh v0.0.1-0.20261012010421-aa9f8595d2d0
+	github.com/0magnet/websh v0.0.1-0.20261012022502-b50521434c81
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
 	github.com/spf13/cobra v1.10.2

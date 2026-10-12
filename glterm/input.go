@@ -276,3 +276,14 @@ func (t *Terminal) paste(primary bool) {
 	}
 	t.Clip.Get(primary, t.Sess.Paste)
 }
+
+// Text handles text that arrives composed rather than as key presses: from an
+// on-screen keyboard or an input method. It goes to the program as typed.
+func (t *Terminal) Text(s string) bool {
+	if s == "" {
+		return false
+	}
+	t.Sel.Clear()
+	t.Sess.Input(s)
+	return true
+}

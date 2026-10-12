@@ -6,6 +6,12 @@ github.com/0magnet/calvin v0.0.1-0.20261011231802-9b916a31f7b1 h1:XinHO/3dBEiILm
 github.com/0magnet/calvin v0.0.1-0.20261011231802-9b916a31f7b1/go.mod h1:DEQrLzLYals86cMu3dfdh4dUr03iZ49GM9KSmWioTxA=
 github.com/0magnet/coloredcobra v1.0.4-0.20261011230509-d5385cf44398 h1:M3jwYEvNP5nFCKReDX7HCArUOEVqgO+yZgJ00qJGLvc=
 github.com/0magnet/coloredcobra v1.0.4-0.20261011230509-d5385cf44398/go.mod h1:XOyBWsYWPuG3gboQHaOve/ubY8HaTqCGjJ+791sF5cM=
+github.com/0magnet/mobile v0.0.0-20261012023928-2873f2dd64a7 h1:SD/fnd+puJGd6HxRJKLD5xmVVEON0Asn8AVb8tebC7w=
+github.com/0magnet/mobile v0.0.0-20261012023928-2873f2dd64a7/go.mod h1:lAjUsMxQVapcCmNTERxgpB7uQDSb9IxlpZz3XRY0YhQ=
+github.com/0magnet/mobile v0.0.0-20261012024204-728ef38a94a2 h1:PAl716y45KCLQ6rDyM30KCMUpn/NGmHTHuLDG7qOMeI=
+github.com/0magnet/mobile v0.0.0-20261012024204-728ef38a94a2/go.mod h1:lAjUsMxQVapcCmNTERxgpB7uQDSb9IxlpZz3XRY0YhQ=
+github.com/0magnet/mobile v0.0.0-20261012024400-04097be00bf8 h1:h0p8yMOt+Zm8apQ5OBQ8fbekgjP7cdjsp+omcEuGnWY=
+github.com/0magnet/mobile v0.0.0-20261012024400-04097be00bf8/go.mod h1:lAjUsMxQVapcCmNTERxgpB7uQDSb9IxlpZz3XRY0YhQ=
 github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5 h1:phE5/F4rBgh+VE51tU7Y6ZusHkQnECwIBBZHQJf7S5M=
 github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5/go.mod h1:ngQcnC5AqtrdAe3n1WaXvxXU63Jex0A7zKpJ4xQMfmQ=
 github.com/0magnet/u-root v0.16.1-0.20261003214924-44e47b732754 h1:wK2MncQOnEea7yqiOHvv3oD89sc+YC1dAw4zw1o48mQ=
@@ -54,6 +60,12 @@ github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An
 github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
 github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+golang.org/x/exp/shiny v0.0.0-20261009195045-ca0d7ba23607 h1:+d6HV3AHvcT254vs2elXnEOB602gvxOWsQtucpdtnAI=
+golang.org/x/exp/shiny v0.0.0-20261009195045-ca0d7ba23607/go.mod h1:LjwWUAy73DRPU6z93L7ykfRhO3biQRlb+dRIYvdwhs8=
+golang.org/x/image v0.47.0 h1:za/8gVz++PPZqmZJBNSISICN5Rrj5zixP/8K++fgmqo=
+golang.org/x/image v0.47.0/go.mod h1:IkN5o4A7vq55vXN8FWjjnhg9Rs2GOtffqsSi9mWAKYE=
+golang.org/x/mobile v0.0.0-20261011034528-197770444867 h1:rav73cdd7OQUPgt1aIFbZQTiPNnjfueKXvfOiLCY0Ss=
+golang.org/x/mobile v0.0.0-20261011034528-197770444867/go.mod h1:HR/iBzuQmVTl/us733QPwrqHp43a8m9ZLgyKXD3ST6U=
 golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
 golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
 golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=

@@ -71,6 +71,17 @@ websh's terms this is the `terminal` source (PROTOCOL.md, Trust).
 | `--no-open` | print the window's address instead of opening it |
 | `--addr` | the loopback address to serve on (default `127.0.0.1:0`, any free port) |
 
+## Without a browser: `progterm gl`
+
+```bash
+progterm gl                  # websh if installed, else $SHELL
+progterm gl --shell bash --font-size 15
+```
+
+The same shell on a pty, in a window drawn by a [gomobile](https://pkg.go.dev/golang.org/x/mobile/app) app instead of a page: [xterm-go](https://github.com/0magnet/xterm-go)'s terminal core (`vt`) fed by the pty, its cells drawn with the Go fonts (braille drawn, since they have none) into one texture. It is the host for where no browser runs, a phone's app first: the code here is what an Android build runs.
+
+It draws cells only. A progressive program finds no host to ask and draws as in any terminal, and TUIs (`skywire cli visor hv tui`, live views) work as they do in one. It needs cgo, X11 and OpenGL ES; gomobile's X11 driver is [0magnet/mobile](https://github.com/0magnet/mobile)'s `x11-keyboard` branch, which adds the keyboard, starts without a window manager, and reads input as it arrives.
+
 ## Status
 
 Verified on Linux, in Brave:

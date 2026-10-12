@@ -4,11 +4,14 @@ go 1.27.1
 
 require (
 	github.com/0magnet/calvin v0.0.1-0.20261011231802-9b916a31f7b1
+	github.com/0magnet/mobile v0.0.0-20261012024400-04097be00bf8
 	github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5
 	github.com/0magnet/websh v0.0.1-0.20261012022502-b50521434c81
+	github.com/0magnet/xterm-go v0.0.1-0.20261011000522-9adb4a350db6
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
 	github.com/spf13/cobra v1.10.2
+	golang.org/x/image v0.47.0
 )
 
 require (
@@ -17,7 +20,6 @@ require (
 	github.com/0magnet/coloredcobra v1.0.4-0.20261011230509-d5385cf44398 // indirect
 	github.com/0magnet/u-root v0.16.1-0.20261003214924-44e47b732754 // indirect
 	github.com/0magnet/winbox-go v0.0.1-0.20261012010320-88f1679695ed // indirect
-	github.com/0magnet/xterm-go v0.0.1-0.20261011000522-9adb4a350db6 // indirect
 	github.com/benhoyt/goawk v1.32.0 // indirect
 	github.com/dustin/go-humanize v1.1.0 // indirect
 	github.com/fatih/color v1.19.0 // indirect
@@ -27,6 +29,8 @@ require (
 	github.com/mattn/go-colorable v0.1.16 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
+	golang.org/x/exp/shiny v0.0.0-20261009195045-ca0d7ba23607 // indirect
+	golang.org/x/mobile v0.0.0-20261011034528-197770444867 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/term v0.47.0 // indirect
 	golang.org/x/text v0.43.0 // indirect

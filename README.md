@@ -90,3 +90,38 @@ Not yet:
 ## License
 
 MIT.
+
+## Dependency Graph
+
+Made with [goda](https://github.com/loov/goda):
+
+```
+# GOOS=js: the import edges of a wasm program live in js/wasm-tagged
+# files and are invisible to a host-context run
+GOOS=js GOARCH=wasm go run github.com/loov/goda@latest graph github.com/0magnet/progterm/... | dot -Tsvg -o docs/progterm-goda-graph.svg
+```
+
+![Dependency Graph](docs/progterm-goda-graph.svg "github.com/0magnet/progterm Dependency Graph")
+
+## Lines of Code
+
+Made with [gocloc](https://github.com/hhatto/gocloc) (excludes `vendor/`, `node_modules/`, `.git/`):
+
+```
+gocloc --not-match-d='(vendor|node_modules|\.git)' .
+```
+
+```
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Go                               3             41             50            431
+Makefile                         1             23             52            116
+Markdown                         1             27              0             99
+YAML                             1              0              7             98
+Bourne Shell                     1              8             17             31
+HTML                             1              0              0             21
+-------------------------------------------------------------------------------
+TOTAL                            8             99            126            796
+-------------------------------------------------------------------------------
+```

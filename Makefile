@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help host build format tidy lint vet test test-wasm test-browser cover check install-linters
+.PHONY: help host build format tidy lint vet test test-wasm test-browser cover check install-linters docs
 
 # The targets that matter are `format` and `check`, and they mean the same
 # thing here as in 0pcom/skywire, which is the reference for these repos.
@@ -186,3 +186,6 @@ check: lint vet test ## Run linters, vet and tests
 install-linters: ## Install the linters
 	${OPTS} go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	${OPTS} go install golang.org/x/tools/cmd/goimports@latest
+
+docs: ## Regenerate the dependency graph and code counts in the README
+	./gendocs.sh

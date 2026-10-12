@@ -76,6 +76,7 @@ websh's terms this is the `terminal` source (PROTOCOL.md, Trust).
 ```bash
 progterm gio                 # websh if installed, else $SHELL
 progterm gio --shell bash --font-size 15
+progterm gio --in-process     # websh in this process, one per tab
 ```
 
 The same shell on a pty, in a window [Gio](https://gioui.org) draws instead of a page: [xterm-go](https://github.com/0magnet/xterm-go)'s terminal core (`vt`) fed by the pty, its cells drawn with the Go fonts (braille drawn, since they have none) into one image. It is the host for where no browser runs, a phone's app first: the terminal (`glterm`) knows nothing of Gio, which is only the window, input, clipboard and on-screen keyboard underneath (`gioterm`).
@@ -83,6 +84,8 @@ The same shell on a pty, in a window [Gio](https://gioui.org) draws instead of a
 It draws cells only. A progressive program finds no host to ask and draws as in any terminal, and TUIs (`skywire cli visor hv tui`, live views) work as they do in one. Drag selects (double click a word, triple a line); right click opens Copy, Paste and Select All (Ctrl+Shift+C, V, A); middle click and Shift+Insert paste the last selection; the wheel and Shift+PageUp/Down scroll back. A program that asks for the mouse gets it; Shift takes it back for selecting. It needs cgo, and X11 or Wayland.
 
 Shells open as tabs in one window, as in the browser desk. Ctrl+Shift+T or the `+` opens one, Ctrl+Shift+W or a middle click on its tab closes it, and a tab goes when its program exits; the window closes with the last. Click a tab, use Ctrl+Tab and Ctrl+Shift+Tab or Ctrl+PageDown and PageUp, or Alt+1 to Alt+9 to change tabs. A program embedding gioterm opens more at the start with `Options.Tabs`, each running its own command.
+
+`progterm gio --in-process` runs websh in the window's own process, one per tab, each on a pty the process opens itself (`glterm.StartFunc`). It is the shape of an app with no shell binary to start, as on Android, where an app may open ptys but not run files it wrote. The kernel signals no one for Ctrl+C on such a pty, so the window reads the pty's settings and, while they say the kernel would (ISIG on, as while a command runs), passes Ctrl+C and Ctrl+\ to that tab's websh as signals (`console.Options.Signals`). At a prompt or in a full-screen program they stay keys.
 
 ## Status
 

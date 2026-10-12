@@ -148,5 +148,8 @@ func titleOf(t glterm.Tab, shell string) string {
 	if t.Title != "" {
 		return t.Title
 	}
+	if shell == "" {
+		return "shell"
+	}
 	return filepath.Base(shell)
 }

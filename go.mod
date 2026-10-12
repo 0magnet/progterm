@@ -6,12 +6,13 @@ require (
 	gioui.org v0.10.3
 	github.com/0magnet/calvin v0.0.1-0.20261012011430-3b61384c1b9e
 	github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5
-	github.com/0magnet/websh v0.0.1-0.20261012132423-845a7d2c77c9
+	github.com/0magnet/websh v0.0.1-0.20261012224925-896c6a90a05a
 	github.com/0magnet/xterm-go v0.0.1-0.20261011000522-9adb4a350db6
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
 	github.com/spf13/cobra v1.10.2
 	golang.org/x/image v0.47.0
+	golang.org/x/sys v0.49.0
 )
 
 require (
@@ -34,7 +35,6 @@ require (
 	github.com/spf13/pflag v1.0.10 // indirect
 	golang.org/x/exp/shiny v0.0.0-20261011100332-faecfb24eb49 // indirect
 	golang.org/x/net v0.61.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/term v0.47.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 )

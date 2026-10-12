@@ -73,7 +73,9 @@ func (s *Session) read() {
 			if !errors.Is(err, io.EOF) && !errors.Is(err, os.ErrClosed) {
 				s.err = err
 			}
-			s.cmd.Wait() //nolint:errcheck,gosec // the shell's exit status is its own business
+			if s.cmd != nil {
+				s.cmd.Wait() //nolint:errcheck,gosec // the shell's exit status is its own business
+			}
 			return
 		}
 	}
@@ -111,7 +113,7 @@ func (s *Session) Done() <-chan struct{} { return s.done }
 
 // Close ends the session: the shell gets a hangup, as when a terminal closes.
 func (s *Session) Close() error {
-	if s.cmd.Process != nil {
+	if s.cmd != nil && s.cmd.Process != nil {
 		s.cmd.Process.Signal(syscall.SIGHUP) //nolint:errcheck,gosec // it may have exited
 	}
 	return s.pty.Close()

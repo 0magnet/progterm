@@ -92,7 +92,7 @@ func loop(w *app.Window, opt glterm.Options) error {
 		area    image.Point // the terminal's part of the window
 		bar     *image.RGBA
 	)
-	pending := append([]glterm.Tab{{Shell: opt.Shell, Args: opt.Args}}, opt.Tabs...)
+	pending := append([]glterm.Tab{{Shell: opt.Shell, Args: opt.Args, Run: opt.Run}}, opt.Tabs...)
 	defer func() {
 		for _, t := range ts.list {
 			t.term.Sess.Close() //nolint:errcheck,gosec // the window is going
@@ -108,7 +108,13 @@ func loop(w *app.Window, opt glterm.Options) error {
 			}
 		}
 		cols, rows := grid.Size(area.X, area.Y)
-		s, err := glterm.Start(shell, args, cols, rows)
+		var s *glterm.Session
+		var err error
+		if spec.Run != nil {
+			s, err = glterm.StartFunc(spec.Run, cols, rows)
+		} else {
+			s, err = glterm.Start(shell, args, cols, rows)
+		}
 		if err != nil {
 			return err
 		}
@@ -177,7 +183,7 @@ func loop(w *app.Window, opt glterm.Options) error {
 
 			s := layoutStrip(ts.labels(), grid.CellW, size.X, stripH)
 			newTab := func() {
-				if err := open(glterm.Tab{}, true); err != nil {
+				if err := open(glterm.Tab{Run: opt.Run}, true); err != nil {
 					fmt.Fprintln(os.Stderr, "progterm: tab:", err)
 				}
 			}

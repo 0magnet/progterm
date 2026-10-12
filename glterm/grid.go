@@ -210,3 +210,23 @@ func (g *Grid) braille(m *image.Alpha, bits int) {
 		draw.Draw(m, image.Rect(x, y, x+dot, y+dot), image.Opaque, image.Point{}, draw.Src)
 	}
 }
+
+// Colors are the grid's default foreground and background.
+func (g *Grid) Colors() (fg, bg color.RGBA) { return g.fg, g.bg }
+
+// Label paints s in one row of cells from r's top left, over bg and clipped
+// to r. A tab's title is drawn with it.
+func (g *Grid) Label(dst *image.RGBA, r image.Rectangle, s string, fg, bg color.RGBA) {
+	draw.Draw(dst, r, &image.Uniform{bg}, image.Point{}, draw.Src)
+	x := r.Min.X
+	for _, c := range s {
+		if x+g.CellW > r.Max.X {
+			return
+		}
+		if c != ' ' {
+			cell := image.Rect(x, r.Min.Y, x+g.CellW, r.Min.Y+g.CellH).Intersect(r)
+			draw.DrawMask(dst, cell, &image.Uniform{fg}, image.Point{}, g.glyph(string(c), 0, 1), image.Point{}, draw.Over)
+		}
+		x += g.CellW
+	}
+}

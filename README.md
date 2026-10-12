@@ -71,16 +71,16 @@ websh's terms this is the `terminal` source (PROTOCOL.md, Trust).
 | `--no-open` | print the window's address instead of opening it |
 | `--addr` | the loopback address to serve on (default `127.0.0.1:0`, any free port) |
 
-## Without a browser: `progterm gl`
+## Without a browser: `progterm gio`
 
 ```bash
-progterm gl                  # websh if installed, else $SHELL
-progterm gl --shell bash --font-size 15
+progterm gio                 # websh if installed, else $SHELL
+progterm gio --shell bash --font-size 15
 ```
 
-The same shell on a pty, in a window drawn by a [gomobile](https://pkg.go.dev/golang.org/x/mobile/app) app instead of a page: [xterm-go](https://github.com/0magnet/xterm-go)'s terminal core (`vt`) fed by the pty, its cells drawn with the Go fonts (braille drawn, since they have none) into one texture. It is the host for where no browser runs, a phone's app first: the code here is what an Android build runs.
+The same shell on a pty, in a window [Gio](https://gioui.org) draws instead of a page: [xterm-go](https://github.com/0magnet/xterm-go)'s terminal core (`vt`) fed by the pty, its cells drawn with the Go fonts (braille drawn, since they have none) into one image. It is the host for where no browser runs, a phone's app first: the terminal (`glterm`) knows nothing of Gio, which is only the window, input, clipboard and on-screen keyboard underneath (`gioterm`).
 
-It draws cells only. A progressive program finds no host to ask and draws as in any terminal, and TUIs (`skywire cli visor hv tui`, live views) work as they do in one. Drag selects (double click a word, triple a line) and puts it on the primary selection; right click opens Copy, Paste and Select All (Ctrl+Shift+C, V, A); middle click and Shift+Insert paste the primary selection; the wheel and Shift+PageUp/Down scroll back. A program that asks for the mouse gets it; Shift takes it back for selecting. It needs cgo, X11 and OpenGL ES; gomobile's X11 driver is [0magnet/mobile](https://github.com/0magnet/mobile)'s `x11-keyboard` branch, which adds the keyboard, starts without a window manager, and reads input as it arrives.
+It draws cells only. A progressive program finds no host to ask and draws as in any terminal, and TUIs (`skywire cli visor hv tui`, live views) work as they do in one. Drag selects (double click a word, triple a line); right click opens Copy, Paste and Select All (Ctrl+Shift+C, V, A); middle click and Shift+Insert paste the last selection; the wheel and Shift+PageUp/Down scroll back. A program that asks for the mouse gets it; Shift takes it back for selecting. It needs cgo, and X11 or Wayland.
 
 ## Status
 

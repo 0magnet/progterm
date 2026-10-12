@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/0magnet/mobile/event/key"
-	"github.com/0magnet/mobile/event/mouse"
 	"github.com/0magnet/xterm-go/vt"
 )
 
@@ -51,7 +49,7 @@ func (t *Terminal) Draw(dst *image.RGBA) {
 	t.Menu.Draw(t.Grid, dst)
 }
 
-// cell is the buffer position under pixel (x, y), and the viewport row.
+// cell is the buffer position under pixel (x, y), and the viewport cell.
 func (t *Terminal) cell(x, y float32) (Pos, int, int) {
 	col := max(0, min(int(x)/t.Grid.CellW, t.Sess.Term.Cols()-1))
 	row := max(0, min(int(y)/t.Grid.CellH, t.Sess.Term.Rows()-1))
@@ -59,16 +57,16 @@ func (t *Terminal) cell(x, y float32) (Pos, int, int) {
 }
 
 // Mouse handles a mouse event, and reports whether the window needs redrawing.
-func (t *Terminal) Mouse(e mouse.Event) bool {
+func (t *Terminal) Mouse(e MouseEvent) bool {
 	x, y := int(e.X), int(e.Y)
 	if t.Menu.Open {
 		switch {
-		case e.Direction == mouse.DirNone:
+		case e.Action == Move:
 			return t.Menu.Hover(x, y)
-		case e.Direction == mouse.DirPress && e.Button == mouse.ButtonRight:
+		case e.Action == Press && e.Button == ButtonRight:
 			t.openMenu(x, y)
 			return true
-		case e.Direction == mouse.DirPress:
+		case e.Action == Press:
 			t.Menu.Click(x, y)
 			return true
 		}
@@ -78,21 +76,20 @@ func (t *Terminal) Mouse(e mouse.Event) bool {
 	t.Sess.Lock()
 	defer t.Sess.Unlock()
 	term := t.Sess.Term
-	shift := e.Modifiers&key.ModShift != 0
 	// A program that asked for the mouse gets it; Shift takes it back, as in
 	// xterm, so text can still be selected over a TUI.
-	if term.MouseService().AreMouseEventsActive() && !shift {
+	if term.MouseService().AreMouseEventsActive() && e.Mods&Shift == 0 {
 		t.report(e)
 		return false
 	}
 
 	pos, _, _ := t.cell(e.X, e.Y)
 	switch {
-	case e.Button.IsWheel():
-		t.wheel(e.Button)
+	case e.Button == WheelUp || e.Button == WheelDown:
+		t.wheel(e.Button == WheelUp)
 		return true
 
-	case e.Button == mouse.ButtonLeft && e.Direction == mouse.DirPress:
+	case e.Button == ButtonLeft && e.Action == Press:
 		now := time.Now()
 		if now.Sub(t.lastDown) < clickGap && pos == t.lastCell {
 			t.clicks = t.clicks%3 + 1
@@ -104,21 +101,21 @@ func (t *Terminal) Mouse(e mouse.Event) bool {
 		t.dragging = true
 		return true
 
-	case e.Direction == mouse.DirNone && t.dragging:
+	case e.Action == Move && t.dragging:
 		t.Sel.Extend(pos)
 		return true
 
-	case e.Button == mouse.ButtonLeft && e.Direction == mouse.DirRelease:
+	case e.Button == ButtonLeft && e.Action == Release:
 		t.dragging = false
 		if text := t.Sel.Text(term); text != "" && t.Clip != nil {
 			t.Clip.Set(true, text) // what is selected is the primary selection
 		}
 		return true
 
-	case e.Button == mouse.ButtonMiddle && e.Direction == mouse.DirPress:
+	case e.Button == ButtonMiddle && e.Action == Press:
 		t.paste(true)
 
-	case e.Button == mouse.ButtonRight && e.Direction == mouse.DirPress:
+	case e.Button == ButtonRight && e.Action == Press:
 		t.Sess.Unlock()
 		t.openMenu(x, y)
 		t.Sess.Lock()
@@ -129,34 +126,32 @@ func (t *Terminal) Mouse(e mouse.Event) bool {
 
 // report sends e to the program, in the mouse protocol it asked for. The
 // session is locked.
-func (t *Terminal) report(e mouse.Event) {
+func (t *Terminal) report(e MouseEvent) {
 	_, col, row := t.cell(e.X, e.Y)
 	me := &vt.MouseEvent{
 		Col: col, Row: row, X: int(e.X), Y: int(e.Y),
-		Ctrl:  e.Modifiers&key.ModControl != 0,
-		Alt:   e.Modifiers&key.ModAlt != 0,
-		Shift: e.Modifiers&key.ModShift != 0,
+		Ctrl: e.Mods&Ctrl != 0, Alt: e.Mods&Alt != 0, Shift: e.Mods&Shift != 0,
 	}
 	switch e.Button {
-	case mouse.ButtonLeft:
+	case ButtonLeft:
 		me.Button = vt.MouseButtonLeft
-	case mouse.ButtonMiddle:
+	case ButtonMiddle:
 		me.Button = vt.MouseButtonMiddle
-	case mouse.ButtonRight:
+	case ButtonRight:
 		me.Button = vt.MouseButtonRight
-	case mouse.ButtonWheelUp, mouse.ButtonWheelDown:
+	case WheelUp, WheelDown:
 		me.Button = vt.MouseButtonWheel
 	default:
 		me.Button = vt.MouseButtonNone
 	}
 	switch {
-	case e.Button == mouse.ButtonWheelUp:
+	case e.Button == WheelUp:
 		me.Action = vt.MouseActionUp
-	case e.Button == mouse.ButtonWheelDown:
+	case e.Button == WheelDown:
 		me.Action = vt.MouseActionDown
-	case e.Direction == mouse.DirPress:
+	case e.Action == Press:
 		me.Action = vt.MouseActionDown
-	case e.Direction == mouse.DirRelease:
+	case e.Action == Release:
 		me.Action = vt.MouseActionUp
 	default:
 		me.Action = vt.MouseActionMove
@@ -164,10 +159,10 @@ func (t *Terminal) report(e mouse.Event) {
 			me.Button = vt.MouseButtonLeft
 		}
 	}
-	switch e.Direction {
-	case mouse.DirPress:
-		t.dragging = e.Button == mouse.ButtonLeft
-	case mouse.DirRelease:
+	switch e.Action {
+	case Press:
+		t.dragging = e.Button == ButtonLeft
+	case Release:
 		t.dragging = false
 	}
 	t.Sess.Term.MouseService().TriggerMouseEvent(me)
@@ -176,15 +171,14 @@ func (t *Terminal) report(e mouse.Event) {
 // wheel scrolls the scrollback, or on the alternate screen (a full-screen
 // program, which has none) sends the cursor keys, as xterm does. The session
 // is locked.
-func (t *Terminal) wheel(b mouse.Button) {
+func (t *Terminal) wheel(up bool) {
 	term := t.Sess.Term
-	up := b == mouse.ButtonWheelUp
 	if term.Buffers().Active() == term.Buffers().Alt() {
-		k := key.CodeDownArrow
+		k := KeyDown
 		if up {
-			k = key.CodeUpArrow
+			k = KeyUp
 		}
-		seq := Encode(key.Event{Rune: -1, Code: k, Direction: key.DirPress}, term.CoreService().DecPrivateModes.ApplicationCursorKeys)
+		seq := Encode(KeyEvent{Key: k}, term.CoreService().DecPrivateModes.ApplicationCursorKeys)
 		term.Input(strings.Repeat(seq, 3), true)
 		return
 	}
@@ -197,34 +191,32 @@ func (t *Terminal) wheel(b mouse.Button) {
 
 // Key handles a key press: the terminal's own shortcuts first, then what goes
 // to the program. It reports whether the window needs redrawing.
-func (t *Terminal) Key(e key.Event) bool {
-	if e.Direction == key.DirRelease {
-		return false
-	}
-	if t.Menu.Open && e.Code == key.CodeEscape {
+func (t *Terminal) Key(e KeyEvent) bool {
+	if t.Menu.Open && e.Key == KeyEscape {
 		t.Menu.Close()
 		return true
 	}
-	ctrl, shift := e.Modifiers&key.ModControl != 0, e.Modifiers&key.ModShift != 0
+	ctrl, shift := e.Mods&Ctrl != 0, e.Mods&Shift != 0
+	letter := e.Rune | 0x20 // the letter, either case
 	switch {
-	case ctrl && shift && e.Code == key.CodeC:
+	case ctrl && shift && letter == 'c':
 		t.copy()
 		return false
-	case ctrl && shift && e.Code == key.CodeV:
+	case ctrl && shift && letter == 'v':
 		t.paste(false)
 		return false
-	case ctrl && shift && e.Code == key.CodeA:
+	case ctrl && shift && letter == 'a':
 		t.Sess.Lock()
 		t.Sel.All(t.Sess.Term)
 		t.Sess.Unlock()
 		return true
-	case shift && e.Code == key.CodeInsert:
+	case shift && e.Key == KeyInsert:
 		t.paste(true)
 		return false
-	case shift && (e.Code == key.CodePageUp || e.Code == key.CodePageDown):
+	case shift && (e.Key == KeyPageUp || e.Key == KeyPageDown):
 		t.Sess.Lock()
 		n := t.Sess.Term.Rows() - 1
-		if e.Code == key.CodePageUp {
+		if e.Key == KeyPageUp {
 			n = -n
 		}
 		t.Sess.Term.ScrollLines(n)
@@ -235,6 +227,17 @@ func (t *Terminal) Key(e key.Event) bool {
 	appCursor := t.Sess.Term.CoreService().DecPrivateModes.ApplicationCursorKeys
 	t.Sess.Unlock()
 	s := Encode(e, appCursor)
+	if s == "" {
+		return false
+	}
+	t.Sel.Clear()
+	t.Sess.Input(s)
+	return true
+}
+
+// Text handles text that arrives composed rather than as key presses: from an
+// on-screen keyboard or an input method. It goes to the program as typed.
+func (t *Terminal) Text(s string) bool {
 	if s == "" {
 		return false
 	}
@@ -275,15 +278,4 @@ func (t *Terminal) paste(primary bool) {
 		return
 	}
 	t.Clip.Get(primary, t.Sess.Paste)
-}
-
-// Text handles text that arrives composed rather than as key presses: from an
-// on-screen keyboard or an input method. It goes to the program as typed.
-func (t *Terminal) Text(s string) bool {
-	if s == "" {
-		return false
-	}
-	t.Sel.Clear()
-	t.Sess.Input(s)
-	return true
 }

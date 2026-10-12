@@ -2,7 +2,7 @@
 
 // Package gioterm is glterm's terminal in a Gio window: the same session,
 // grid, selection and menu, with Gio as the platform layer underneath —
-// window, input, clipboard and the on-screen keyboard — in place of gomobile.
+// window, input, clipboard and the on-screen keyboard.
 package gioterm
 
 import (
@@ -25,8 +25,6 @@ import (
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/unit"
-	mkey "github.com/0magnet/mobile/event/key"
-	"github.com/0magnet/mobile/event/mouse"
 
 	"github.com/0magnet/progterm/glterm"
 )
@@ -208,15 +206,15 @@ func handle(src input.Source, tag *int, t *glterm.Terminal, cb *clipboardBridge,
 			if ev.State != key.Press {
 				continue
 			}
-			if me, ok := mobileKey(ev); ok {
-				t.Key(me)
+			if ke, ok := termKey(ev); ok {
+				t.Key(ke)
 			}
 		case pointer.Event:
 			if ev.Kind == pointer.Press {
 				src.Execute(key.FocusCmd{Tag: tag})
 				src.Execute(key.SoftKeyboardCmd{Show: true})
 			}
-			for _, me := range mobileMouse(ev, held) {
+			for _, me := range termMouse(ev, held) {
 				t.Mouse(me)
 			}
 		case transfer.DataEvent:
@@ -233,98 +231,94 @@ func handle(src input.Source, tag *int, t *glterm.Terminal, cb *clipboardBridge,
 	}
 }
 
-// names maps Gio's key names to the codes glterm's encoder takes.
-var names = map[key.Name]mkey.Code{
-	key.NameReturn: mkey.CodeReturnEnter, key.NameEnter: mkey.CodeKeypadEnter, key.NameEscape: mkey.CodeEscape,
-	key.NameDeleteBackward: mkey.CodeDeleteBackspace, key.NameDeleteForward: mkey.CodeDeleteForward,
-	key.NameTab: mkey.CodeTab, key.NameUpArrow: mkey.CodeUpArrow, key.NameDownArrow: mkey.CodeDownArrow,
-	key.NameLeftArrow: mkey.CodeLeftArrow, key.NameRightArrow: mkey.CodeRightArrow,
-	key.NameHome: mkey.CodeHome, key.NameEnd: mkey.CodeEnd, key.NamePageUp: mkey.CodePageUp, key.NamePageDown: mkey.CodePageDown,
-	key.NameF1: mkey.CodeF1, key.NameF2: mkey.CodeF2, key.NameF3: mkey.CodeF3, key.NameF4: mkey.CodeF4,
-	key.NameF5: mkey.CodeF5, key.NameF6: mkey.CodeF6, key.NameF7: mkey.CodeF7, key.NameF8: mkey.CodeF8,
-	key.NameF9: mkey.CodeF9, key.NameF10: mkey.CodeF10, key.NameF11: mkey.CodeF11, key.NameF12: mkey.CodeF12,
-	key.NameSpace: mkey.CodeSpacebar,
+// names maps Gio's key names to glterm's.
+var names = map[key.Name]glterm.Key{
+	key.NameReturn: glterm.KeyEnter, key.NameEnter: glterm.KeyEnter, key.NameEscape: glterm.KeyEscape,
+	key.NameDeleteBackward: glterm.KeyBackspace, key.NameDeleteForward: glterm.KeyDelete,
+	key.NameTab: glterm.KeyTab, key.NameUpArrow: glterm.KeyUp, key.NameDownArrow: glterm.KeyDown,
+	key.NameLeftArrow: glterm.KeyLeft, key.NameRightArrow: glterm.KeyRight,
+	key.NameHome: glterm.KeyHome, key.NameEnd: glterm.KeyEnd, key.NamePageUp: glterm.KeyPageUp, key.NamePageDown: glterm.KeyPageDown,
+	key.NameF1: glterm.KeyF1, key.NameF2: glterm.KeyF2, key.NameF3: glterm.KeyF3, key.NameF4: glterm.KeyF4,
+	key.NameF5: glterm.KeyF5, key.NameF6: glterm.KeyF6, key.NameF7: glterm.KeyF7, key.NameF8: glterm.KeyF8,
+	key.NameF9: glterm.KeyF9, key.NameF10: glterm.KeyF10, key.NameF11: glterm.KeyF11, key.NameF12: glterm.KeyF12,
 }
 
-// mobileKey is a Gio key press as the key.Event glterm takes.
-func mobileKey(e key.Event) (mkey.Event, bool) {
-	me := mkey.Event{Rune: -1, Direction: mkey.DirPress}
-	if e.Modifiers.Contain(key.ModShift) {
-		me.Modifiers |= mkey.ModShift
+// mods is Gio's modifiers as glterm's.
+func mods(m key.Modifiers) glterm.Mods {
+	var g glterm.Mods
+	if m.Contain(key.ModShift) {
+		g |= glterm.Shift
 	}
-	if e.Modifiers.Contain(key.ModCtrl) {
-		me.Modifiers |= mkey.ModControl
+	if m.Contain(key.ModCtrl) {
+		g |= glterm.Ctrl
 	}
-	if e.Modifiers.Contain(key.ModAlt) {
-		me.Modifiers |= mkey.ModAlt
+	if m.Contain(key.ModAlt) {
+		g |= glterm.Alt
 	}
-	if c, ok := names[e.Name]; ok {
-		me.Code = c
-		if c == mkey.CodeSpacebar {
-			me.Rune = ' '
-		}
-		return me, true
+	if m.Contain(key.ModSuper) {
+		g |= glterm.Meta
+	}
+	return g
+}
+
+// termKey is a Gio key press as glterm's KeyEvent.
+func termKey(e key.Event) (glterm.KeyEvent, bool) {
+	ke := glterm.KeyEvent{Mods: mods(e.Modifiers)}
+	if e.Name == key.NameSpace {
+		ke.Rune = ' '
+		return ke, true
+	}
+	if k, ok := names[e.Name]; ok {
+		ke.Key = k
+		return ke, true
 	}
 	// A letter, digit or symbol held with Ctrl or Alt: Gio names it by the
 	// character, upper case for letters.
 	r, n := utf8.DecodeRuneInString(string(e.Name))
 	if n == 0 || n != len(e.Name) {
-		return me, false
+		return ke, false
 	}
-	if r >= 'A' && r <= 'Z' {
-		me.Code = mkey.CodeA + mkey.Code(r-'A')
-		if !e.Modifiers.Contain(key.ModShift) {
-			r += 'a' - 'A'
-		}
+	if r >= 'A' && r <= 'Z' && !e.Modifiers.Contain(key.ModShift) {
+		r += 'a' - 'A'
 	}
-	me.Rune = r
-	return me, true
+	ke.Rune = r
+	return ke, true
 }
 
-// mobileMouse is a Gio pointer event as the mouse.Events glterm takes. Gio
-// reports which buttons are held; a press or release is the one that changed.
-func mobileMouse(e pointer.Event, held *pointer.Buttons) []mouse.Event {
-	at := func(b mouse.Button, d mouse.Direction) mouse.Event {
-		me := mouse.Event{X: e.Position.X, Y: e.Position.Y, Button: b, Direction: d}
-		if e.Modifiers.Contain(key.ModShift) {
-			me.Modifiers |= mkey.ModShift
-		}
-		if e.Modifiers.Contain(key.ModCtrl) {
-			me.Modifiers |= mkey.ModControl
-		}
-		if e.Modifiers.Contain(key.ModAlt) {
-			me.Modifiers |= mkey.ModAlt
-		}
-		return me
+// termMouse is a Gio pointer event as glterm's MouseEvents. Gio reports which
+// buttons are held; a press or release is of the ones that changed.
+func termMouse(e pointer.Event, held *pointer.Buttons) []glterm.MouseEvent {
+	at := func(b glterm.Button, a glterm.Action) glterm.MouseEvent {
+		return glterm.MouseEvent{X: e.Position.X, Y: e.Position.Y, Button: b, Action: a, Mods: mods(e.Modifiers)}
 	}
-	var out []mouse.Event
+	var out []glterm.MouseEvent
 	switch e.Kind {
 	case pointer.Press, pointer.Release:
 		changed := e.Buttons ^ *held
-		d := mouse.DirPress
+		a := glterm.Press
 		if e.Kind == pointer.Release {
-			d = mouse.DirRelease
+			a = glterm.Release
 		}
 		for _, b := range []struct {
 			g pointer.Buttons
-			m mouse.Button
-		}{{pointer.ButtonPrimary, mouse.ButtonLeft}, {pointer.ButtonSecondary, mouse.ButtonRight}, {pointer.ButtonTertiary, mouse.ButtonMiddle}} {
+			t glterm.Button
+		}{{pointer.ButtonPrimary, glterm.ButtonLeft}, {pointer.ButtonSecondary, glterm.ButtonRight}, {pointer.ButtonTertiary, glterm.ButtonMiddle}} {
 			if changed&b.g != 0 {
-				out = append(out, at(b.m, d))
+				out = append(out, at(b.t, a))
 			}
 		}
 		if e.Source == pointer.Touch && len(out) == 0 {
-			out = append(out, at(mouse.ButtonLeft, d))
+			out = append(out, at(glterm.ButtonLeft, a))
 		}
 	case pointer.Drag, pointer.Move:
-		out = append(out, at(mouse.ButtonNone, mouse.DirNone))
+		out = append(out, at(glterm.ButtonNone, glterm.Move))
 	case pointer.Scroll:
-		b := mouse.ButtonWheelDown
-		if e.Scroll.Y < 0 {
-			b = mouse.ButtonWheelUp
-		}
 		if e.Scroll != (f32.Point{}) {
-			out = append(out, at(b, mouse.DirStep))
+			b := glterm.WheelDown
+			if e.Scroll.Y < 0 {
+				b = glterm.WheelUp
+			}
+			out = append(out, at(b, glterm.Press))
 		}
 	}
 	*held = e.Buttons

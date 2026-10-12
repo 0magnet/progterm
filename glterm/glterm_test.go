@@ -5,7 +5,6 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/0magnet/mobile/event/key"
 	"github.com/0magnet/xterm-go/vt"
 )
 
@@ -80,30 +79,26 @@ func TestGridDrawsBraille(t *testing.T) {
 }
 
 func TestEncode(t *testing.T) {
-	press := func(r rune, c key.Code, m key.Modifiers) key.Event {
-		return key.Event{Rune: r, Code: c, Modifiers: m, Direction: key.DirPress}
-	}
 	for _, tc := range []struct {
-		e         key.Event
+		e         KeyEvent
 		appCursor bool
 		want      string
 	}{
-		{press('a', key.CodeA, 0), false, "a"},
-		{press('A', key.CodeA, key.ModShift), false, "A"},
-		{press('c', key.CodeC, key.ModControl), false, "\x03"},
-		{press('x', key.CodeX, key.ModAlt), false, "\x1bx"},
-		{press('[', key.CodeLeftSquareBracket, key.ModControl), false, "\x1b"},
-		{press('α', 0, 0), false, "α"},
-		{press(-1, key.CodeReturnEnter, 0), false, "\r"},
-		{press(-1, key.CodeDeleteBackspace, 0), false, "\x7f"},
-		{press(-1, key.CodeUpArrow, 0), false, "\x1b[A"},
-		{press(-1, key.CodeUpArrow, 0), true, "\x1bOA"},
-		{press(-1, key.CodeF5, 0), false, "\x1b[15~"},
-		{press(-1, key.CodeLeftShift, key.ModShift), false, ""},
-		{key.Event{Rune: 'a', Code: key.CodeA, Direction: key.DirRelease}, false, ""},
+		{KeyEvent{Rune: 'a'}, false, "a"},
+		{KeyEvent{Rune: 'c', Mods: Ctrl}, false, "\x03"},
+		{KeyEvent{Rune: 'x', Mods: Alt}, false, "\x1bx"},
+		{KeyEvent{Rune: '[', Mods: Ctrl}, false, "\x1b"},
+		{KeyEvent{Rune: 'α'}, false, "α"},
+		{KeyEvent{Key: KeyEnter}, false, "\r"},
+		{KeyEvent{Key: KeyBackspace}, false, "\x7f"},
+		{KeyEvent{Key: KeyUp}, false, "\x1b[A"},
+		{KeyEvent{Key: KeyUp}, true, "\x1bOA"},
+		{KeyEvent{Key: KeyF5}, false, "\x1b[15~"},
+		{KeyEvent{Key: KeyTab, Mods: Shift}, false, "\x1b[Z"},
+		{KeyEvent{}, false, ""},
 	} {
 		if got := Encode(tc.e, tc.appCursor); got != tc.want {
-			t.Errorf("Encode(%v, %v) = %q, want %q", tc.e, tc.appCursor, got, tc.want)
+			t.Errorf("Encode(%+v, %v) = %q, want %q", tc.e, tc.appCursor, got, tc.want)
 		}
 	}
 }

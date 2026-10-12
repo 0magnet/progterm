@@ -1,9 +1,9 @@
 // Package glterm is a terminal drawn without a browser: xterm-go's terminal
 // core (vt) fed by a shell on a pty, its cells drawn with the Go fonts into an
-// image a gomobile app puts on the screen. It is the host that runs where no
-// page can, a phone's app among them, and it draws cells only: a progressive
-// program finds no host to ask (PROTOCOL.md in websh) and draws as it does in
-// any terminal.
+// image a window puts on the screen (gioterm, on Gio). It is the host that
+// runs where no page can, a phone's app among them, and it draws cells only: a
+// progressive program finds no host to ask (PROTOCOL.md in websh) and draws
+// as it does in any terminal.
 package glterm
 
 import (

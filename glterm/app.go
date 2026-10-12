@@ -9,6 +9,7 @@ import (
 	"github.com/0magnet/mobile/app"
 	"github.com/0magnet/mobile/event/key"
 	"github.com/0magnet/mobile/event/lifecycle"
+	"github.com/0magnet/mobile/event/mouse"
 	"github.com/0magnet/mobile/event/paint"
 	"github.com/0magnet/mobile/event/size"
 	"github.com/0magnet/mobile/exp/gl/glutil"
@@ -18,6 +19,23 @@ import (
 
 // exited is sent through the app's events when the shell has ended.
 type exited struct{}
+
+// systemClipboard is gomobile's clipboard. A read waits on the clipboard's
+// owner, so it is made off the event loop and the paste follows when it
+// comes.
+type systemClipboard struct{}
+
+func (systemClipboard) Set(primary bool, text string) {
+	app.SetClipboard(primary, text) //nolint:errcheck,gosec // nowhere to report it; the next copy tries again
+}
+
+func (systemClipboard) Get(primary bool, paste func(string)) {
+	go func() {
+		if text, err := app.ReadClipboard(primary); err == nil && text != "" {
+			paste(text)
+		}
+	}()
+}
 
 // Run opens the window and runs the shell in it until the shell exits or the
 // window is closed. It must be called from the main goroutine (gomobile's
@@ -39,14 +57,13 @@ func loop(a app.App, opt Options) error {
 		images *glutil.Images
 		img    *glutil.Image
 		sz     size.Event
-		grid   *Grid
 		ppp    float32
-		sess   *Session
+		t      = &Terminal{Clip: systemClipboard{}}
 		dirty  atomic.Bool // a paint is wanted and not yet sent
 	)
 	defer func() {
-		if sess != nil {
-			sess.Close() //nolint:errcheck,gosec // the window is going
+		if t.Sess != nil {
+			t.Sess.Close() //nolint:errcheck,gosec // the window is going
 		}
 	}()
 	repaint := func() {
@@ -81,27 +98,29 @@ func loop(a app.App, opt Options) error {
 
 		case size.Event:
 			sz = e
-			if grid == nil || e.PixelsPerPt != ppp {
+			if t.Grid == nil || e.PixelsPerPt != ppp {
 				g, err := NewGrid(opt.FontPt * float64(e.PixelsPerPt))
 				if err != nil {
 					return err
 				}
-				grid, ppp = g, e.PixelsPerPt
+				t.Grid, ppp = g, e.PixelsPerPt
 			}
-			cols, rows := grid.Size(e.WidthPx, e.HeightPx)
-			if sess == nil {
+			t.Resize(e.WidthPx, e.HeightPx)
+			t.Menu.Close()
+			cols, rows := t.Grid.Size(e.WidthPx, e.HeightPx)
+			if t.Sess == nil {
 				s, err := Start(opt.Shell, opt.Args, cols, rows)
 				if err != nil {
 					return fmt.Errorf("glterm: %w", err)
 				}
-				sess = s
-				sess.OnChange = repaint
+				t.Sess = s
+				s.OnChange = repaint
 				go func() {
 					<-s.Done()
 					a.Send(exited{})
 				}()
 			} else {
-				sess.Resize(cols, rows, e.WidthPx, e.HeightPx)
+				t.Sess.Resize(cols, rows, e.WidthPx, e.HeightPx)
 			}
 			if img != nil {
 				img.Release()
@@ -111,15 +130,13 @@ func loop(a app.App, opt Options) error {
 
 		case paint.Event:
 			dirty.Store(false)
-			if glctx == nil || sess == nil || sz.WidthPx == 0 {
+			if glctx == nil || t.Sess == nil || sz.WidthPx == 0 {
 				continue
 			}
 			if img == nil {
 				img = images.NewImage(sz.WidthPx, sz.HeightPx)
 			}
-			sess.Lock()
-			grid.Draw(sess.Term, img.RGBA)
-			sess.Unlock()
+			t.Draw(img.RGBA)
 			img.Upload()
 			glctx.ClearColor(0, 0, 0, 1)
 			glctx.Clear(gl.COLOR_BUFFER_BIT)
@@ -127,13 +144,14 @@ func loop(a app.App, opt Options) error {
 			a.Publish()
 
 		case key.Event:
-			if sess == nil {
-				continue
+			if t.Sess != nil && t.Key(e) {
+				repaint()
 			}
-			sess.Lock()
-			appCursor := sess.Term.CoreService().DecPrivateModes.ApplicationCursorKeys
-			sess.Unlock()
-			sess.Input(Encode(e, appCursor))
+
+		case mouse.Event:
+			if t.Sess != nil && t.Mouse(e) {
+				repaint()
+			}
 
 		case exited:
 			return nil

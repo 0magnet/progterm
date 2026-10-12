@@ -36,6 +36,12 @@ type Grid struct {
 	fg, bg  color.RGBA
 }
 
+// The selection's colors.
+var (
+	selBG = color.RGBA{0x26, 0x4f, 0x78, 0xff}
+	selFG = color.RGBA{0xff, 0xff, 0xff, 0xff}
+)
+
 type glyphKey struct {
 	s    string
 	face int
@@ -76,8 +82,9 @@ func (g *Grid) Size(w, h int) (cols, rows int) {
 	return max(1, w/g.CellW), max(1, h/g.CellH)
 }
 
-// Draw paints t's viewport into dst, with the cursor where t has it.
-func (g *Grid) Draw(t *vt.Terminal, dst *image.RGBA) {
+// Draw paints t's viewport into dst, with the cursor where t has it and the
+// cells sel holds highlighted. sel may be nil.
+func (g *Grid) Draw(t *vt.Terminal, dst *image.RGBA, sel *Selection) {
 	draw.Draw(dst, dst.Bounds(), &image.Uniform{g.bg}, image.Point{}, draw.Src)
 	buf := t.Buffer()
 	cell := vt.NewCellData()
@@ -98,18 +105,21 @@ func (g *Grid) Draw(t *vt.Terminal, dst *image.RGBA) {
 				continue // the right half of a wide character
 			}
 			cursor := cursorOn && row == buf.Y && col == buf.X
-			g.drawCell(dst, col, row, w, cell, cursor)
+			g.drawCell(dst, col, row, w, cell, cursor, sel != nil && sel.Contains(t, i, col))
 		}
 	}
 }
 
-func (g *Grid) drawCell(dst *image.RGBA, col, row, width int, c *vt.CellData, cursor bool) {
+func (g *Grid) drawCell(dst *image.RGBA, col, row, width int, c *vt.CellData, cursor, selected bool) {
 	fg, bg := g.colorOf(c.GetFgColorMode(), c.GetFgColor(), g.fg), g.colorOf(c.GetBgColorMode(), c.GetBgColor(), g.bg)
 	if c.IsBold() && c.GetFgColorMode() == vt.AttrCMP16 && c.GetFgColor() < 8 {
 		fg = g.palette[c.GetFgColor()+8] // bold brightens the first eight, as xterm does
 	}
 	if c.IsInverse() != cursor {
 		fg, bg = bg, fg
+	}
+	if selected {
+		fg, bg = selFG, selBG
 	}
 	if c.IsDim() {
 		fg = color.RGBA{fg.R / 2, fg.G / 2, fg.B / 2, 0xff}

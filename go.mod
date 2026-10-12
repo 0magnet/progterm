@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/0magnet/calvin v0.0.1-0.20261011231802-9b916a31f7b1
-	github.com/0magnet/mobile v0.0.0-20261012024400-04097be00bf8
+	github.com/0magnet/mobile v0.0.0-20261012031217-c8ba05eb9489
 	github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5
 	github.com/0magnet/websh v0.0.1-0.20261012022502-b50521434c81
 	github.com/0magnet/xterm-go v0.0.1-0.20261011000522-9adb4a350db6

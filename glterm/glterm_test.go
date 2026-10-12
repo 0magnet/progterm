@@ -20,7 +20,7 @@ func render(t *testing.T, cols, rows int, s string) (*Grid, *image.RGBA) {
 	term.Resize(cols, rows)
 	term.WriteString(s)
 	img := image.NewRGBA(image.Rect(0, 0, cols*g.CellW, rows*g.CellH))
-	g.Draw(term, img)
+	g.Draw(term, img, nil)
 	return g, img
 }
 
@@ -105,5 +105,67 @@ func TestEncode(t *testing.T) {
 		if got := Encode(tc.e, tc.appCursor); got != tc.want {
 			t.Errorf("Encode(%v, %v) = %q, want %q", tc.e, tc.appCursor, got, tc.want)
 		}
+	}
+}
+
+func TestSelectionText(t *testing.T) {
+	term := vt.NewTerminal(nil)
+	term.Resize(10, 4)
+	term.WriteString("hello wor\r\nld two\r\nthree")
+	var s Selection
+	s.Start(Pos{0, 6}, ByChar)
+	s.Extend(Pos{1, 1})
+	if got := s.Text(term); got != "wor\nld" {
+		t.Errorf("drag: %q", got)
+	}
+	s.Start(Pos{1, 4}, ByWord)
+	if got := s.Text(term); got != "two" {
+		t.Errorf("word: %q", got)
+	}
+	s.Start(Pos{2, 2}, ByLine)
+	if got := s.Text(term); got != "three" {
+		t.Errorf("line: %q", got)
+	}
+	s.Start(Pos{0, 3}, ByChar)
+	if !s.Empty() || s.Text(term) != "" {
+		t.Error("a click alone selected something")
+	}
+}
+
+// A line the terminal wrapped is one line of copied text.
+func TestSelectionJoinsWrappedLines(t *testing.T) {
+	term := vt.NewTerminal(nil)
+	term.Resize(5, 4)
+	term.WriteString("abcdefgh")
+	var s Selection
+	s.Start(Pos{0, 0}, ByChar)
+	s.Extend(Pos{1, 2})
+	if got := s.Text(term); got != "abcdefgh" {
+		t.Errorf("got %q", got)
+	}
+}
+
+func TestMenu(t *testing.T) {
+	g, err := NewGrid(16)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ran string
+	var m Menu
+	m.Show(g, 10, 10, image.Rect(0, 0, 400, 400), []MenuItem{
+		{"Copy", "", false, func() { ran = "copy" }},
+		{"Paste", "", true, func() { ran = "paste" }},
+	})
+	row := func(i int) int { return 10 + m.rowH/4 + i*m.rowH + m.rowH/2 }
+	if m.Click(20, row(0)); ran != "" || m.Open {
+		t.Errorf("a disabled item ran (%q) or the menu stayed open", ran)
+	}
+	m.Show(g, 10, 10, image.Rect(0, 0, 400, 400), m.Items)
+	if m.Click(20, row(1)); ran != "paste" {
+		t.Errorf("clicking Paste ran %q", ran)
+	}
+	m.Show(g, 390, 390, image.Rect(0, 0, 400, 400), m.Items)
+	if !m.rect.In(image.Rect(0, 0, 400, 400)) {
+		t.Errorf("menu at the corner spills out: %v", m.rect)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 	"sync"
 	"syscall"
 
@@ -125,4 +126,19 @@ func DefaultShell() string {
 		return s
 	}
 	return "/bin/sh"
+}
+
+// Paste sends pasted text to the program: line endings as Enter, and inside
+// the bracketed-paste markers when the program asked for them, so a shell
+// does not run a pasted line before it is looked at.
+func (s *Session) Paste(text string) {
+	text = strings.ReplaceAll(text, "\r\n", "\r")
+	text = strings.ReplaceAll(text, "\n", "\r")
+	s.mu.Lock()
+	if s.Term.CoreService().DecPrivateModes.BracketedPasteMode {
+		text = "\x1b[200~" + text + "\x1b[201~"
+	}
+	s.Term.ScrollToBottom()
+	s.Term.Input(text, true)
+	s.mu.Unlock()
 }

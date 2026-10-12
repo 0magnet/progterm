@@ -6,12 +6,8 @@ github.com/0magnet/calvin v0.0.1-0.20261011231802-9b916a31f7b1 h1:XinHO/3dBEiILm
 github.com/0magnet/calvin v0.0.1-0.20261011231802-9b916a31f7b1/go.mod h1:DEQrLzLYals86cMu3dfdh4dUr03iZ49GM9KSmWioTxA=
 github.com/0magnet/coloredcobra v1.0.4-0.20261011230509-d5385cf44398 h1:M3jwYEvNP5nFCKReDX7HCArUOEVqgO+yZgJ00qJGLvc=
 github.com/0magnet/coloredcobra v1.0.4-0.20261011230509-d5385cf44398/go.mod h1:XOyBWsYWPuG3gboQHaOve/ubY8HaTqCGjJ+791sF5cM=
-github.com/0magnet/mobile v0.0.0-20261012023928-2873f2dd64a7 h1:SD/fnd+puJGd6HxRJKLD5xmVVEON0Asn8AVb8tebC7w=
-github.com/0magnet/mobile v0.0.0-20261012023928-2873f2dd64a7/go.mod h1:lAjUsMxQVapcCmNTERxgpB7uQDSb9IxlpZz3XRY0YhQ=
-github.com/0magnet/mobile v0.0.0-20261012024204-728ef38a94a2 h1:PAl716y45KCLQ6rDyM30KCMUpn/NGmHTHuLDG7qOMeI=
-github.com/0magnet/mobile v0.0.0-20261012024204-728ef38a94a2/go.mod h1:lAjUsMxQVapcCmNTERxgpB7uQDSb9IxlpZz3XRY0YhQ=
-github.com/0magnet/mobile v0.0.0-20261012024400-04097be00bf8 h1:h0p8yMOt+Zm8apQ5OBQ8fbekgjP7cdjsp+omcEuGnWY=
-github.com/0magnet/mobile v0.0.0-20261012024400-04097be00bf8/go.mod h1:lAjUsMxQVapcCmNTERxgpB7uQDSb9IxlpZz3XRY0YhQ=
+github.com/0magnet/mobile v0.0.0-20261012031217-c8ba05eb9489 h1:kBiIKnJTH1k1emJtfZocjFOGJ1oySmkYY9r6yXIf+Xk=
+github.com/0magnet/mobile v0.0.0-20261012031217-c8ba05eb9489/go.mod h1:lAjUsMxQVapcCmNTERxgpB7uQDSb9IxlpZz3XRY0YhQ=
 github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5 h1:phE5/F4rBgh+VE51tU7Y6ZusHkQnECwIBBZHQJf7S5M=
 github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5/go.mod h1:ngQcnC5AqtrdAe3n1WaXvxXU63Jex0A7zKpJ4xQMfmQ=
 github.com/0magnet/u-root v0.16.1-0.20261003214924-44e47b732754 h1:wK2MncQOnEea7yqiOHvv3oD89sc+YC1dAw4zw1o48mQ=

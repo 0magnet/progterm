@@ -82,6 +82,8 @@ The same shell on a pty, in a window [Gio](https://gioui.org) draws instead of a
 
 It draws cells only. A progressive program finds no host to ask and draws as in any terminal, and TUIs (`skywire cli visor hv tui`, live views) work as they do in one. Drag selects (double click a word, triple a line); right click opens Copy, Paste and Select All (Ctrl+Shift+C, V, A); middle click and Shift+Insert paste the last selection; the wheel and Shift+PageUp/Down scroll back. A program that asks for the mouse gets it; Shift takes it back for selecting. It needs cgo, and X11 or Wayland.
 
+Shells open as tabs in one window, as in the browser desk. Ctrl+Shift+T or the `+` opens one, Ctrl+Shift+W or a middle click on its tab closes it, and a tab goes when its program exits; the window closes with the last. Click a tab, use Ctrl+Tab and Ctrl+Shift+Tab or Ctrl+PageDown and PageUp, or Alt+1 to Alt+9 to change tabs. A program embedding gioterm opens more at the start with `Options.Tabs`, each running its own command.
+
 ## Status
 
 Verified on Linux, in Brave:

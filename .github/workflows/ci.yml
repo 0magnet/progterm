@@ -15,6 +15,12 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      # `progterm gio` is a Gio window, which links against the system's
+      # Wayland, X11 and EGL libraries through cgo: without their headers the
+      # host build stops at pkg-config.
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc pkg-config libwayland-dev libx11-dev libx11-xcb-dev libxkbcommon-x11-dev libgles2-mesa-dev libegl1-mesa-dev libffi-dev libxcursor-dev libvulkan-dev
       # make test, not go test ./...: it recurses into nested modules and falls
       # back to the js/wasm tests under Node where nothing builds for the host,
       # which is the whole of some of these repos.

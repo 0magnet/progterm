@@ -69,8 +69,8 @@ github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3A
 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
 golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa h1:QSyA8ishJCyT21kER9KwNt0b7BM3iRK4x9QXhjN5Fdk=
 golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa/go.mod h1:zeBbvyFKDaLwa7CH/zI8KXt7gTl14SF7sO08Pl5jBCM=
-golang.org/x/exp/shiny v0.0.0-20261013213113-2ab7f3cbc5fb h1:TOeg6q45IKFyKG+5BOYsLtYmleQjJWDlm5CIM0zB/uA=
-golang.org/x/exp/shiny v0.0.0-20261013213113-2ab7f3cbc5fb/go.mod h1:ZdXIpWF4Owq+1g/S4uCKu+fMhV3xxPseTF4wQNeKtgM=
+golang.org/x/exp/shiny v0.0.0-20261014143641-f0251eb4aa3e h1:z4P0s/a5L9p+5XPLaFdiLrek83ZClG+yXkO2J+1RKlI=
+golang.org/x/exp/shiny v0.0.0-20261014143641-f0251eb4aa3e/go.mod h1:ZdXIpWF4Owq+1g/S4uCKu+fMhV3xxPseTF4wQNeKtgM=
 golang.org/x/image v0.47.0 h1:za/8gVz++PPZqmZJBNSISICN5Rrj5zixP/8K++fgmqo=
 golang.org/x/image v0.47.0/go.mod h1:IkN5o4A7vq55vXN8FWjjnhg9Rs2GOtffqsSi9mWAKYE=
 golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=

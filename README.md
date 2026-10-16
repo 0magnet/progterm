@@ -76,12 +76,15 @@ websh's terms this is the `terminal` source (PROTOCOL.md, Trust).
 ```bash
 progterm gio                 # websh if installed, else $SHELL
 progterm gio --shell bash --font-size 15
+progterm gio --font "DejaVu Sans Mono 10"
 progterm gio --in-process     # websh in this process, one per tab
 ```
 
-The same shell on a pty, in a window [Gio](https://gioui.org) draws instead of a page: [xterm-go](https://github.com/0magnet/xterm-go)'s terminal core (`vt`) fed by the pty, its cells drawn with the Go fonts (braille drawn, since they have none) into one image. It is the host for where no browser runs, a phone's app first: the terminal (`glterm`) knows nothing of Gio, which is only the window, input, clipboard and on-screen keyboard underneath (`gioterm`).
+The same shell on a pty, in a window [Gio](https://gioui.org) draws instead of a page: [xterm-go](https://github.com/0magnet/xterm-go)'s terminal core (`vt`) fed by the pty, its cells drawn into one image (braille drawn, since fonts often have none). It is the host for where no browser runs, a phone's app first: the terminal (`glterm`) knows nothing of Gio, which is only the window, input, clipboard and on-screen keyboard underneath (`gioterm`).
 
 It draws cells only. A progressive program finds no host to ask and draws as in any terminal, and TUIs (`skywire cli visor hv tui`, live views) work as they do in one. Drag selects (double click a word, triple a line); right click opens Copy, Paste and Select All (Ctrl+Shift+C, V, A); middle click and Shift+Insert paste the last selection; the wheel and Shift+PageUp/Down scroll back. A program that asks for the mouse gets it; Shift takes it back for selecting. It needs cgo, and X11 or Wayland.
+
+The font is `--font "Family Size"`, found with fontconfig (`fc-match`) in its regular, bold, italic and bold italic styles, a missing style drawn with the regular one. Without `--font` it is the desktop terminal's: xfce4-terminal's when it has its own, then GNOME's monospace font, then fontconfig's `monospace`. Go Mono is built in and is used where none of that works. The size is in points at the screen's DPI (`Xft.dpi` on X11), so 10 is the size it is in other terminals. The window opens 100 by 30 cells of that font, fewer where the screen has no room for them.
 
 Shells open as tabs in one window, as in the browser desk. Ctrl+Shift+T or the `+` opens one, Ctrl+Shift+W or a middle click on its tab closes it, and a tab goes when its program exits; the window closes with the last. Click a tab, use Ctrl+Tab and Ctrl+Shift+Tab or Ctrl+PageDown and PageUp, or Alt+1 to Alt+9 to change tabs. A program embedding gioterm opens more at the start with `Options.Tabs`, each running its own command.
 

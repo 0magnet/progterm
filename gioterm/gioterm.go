@@ -38,7 +38,11 @@ func Run(opt glterm.Options) error {
 	}
 	go func() {
 		w := new(app.Window)
-		w.Option(app.Title("progterm"), app.Size(unit.Dp(600), unit.Dp(800)))
+		title := opt.Title
+		if title == "" {
+			title = "progterm"
+		}
+		w.Option(app.Title(title), app.Size(unit.Dp(600), unit.Dp(800)))
 		if err := loop(w, opt); err != nil {
 			fmt.Fprintln(os.Stderr, "progterm:", err)
 			os.Exit(1)

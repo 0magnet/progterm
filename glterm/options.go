@@ -12,6 +12,8 @@ type Options struct {
 	Run func(tty *os.File, sig <-chan os.Signal) int
 	// FontPt is the font size in points. Zero means 13.
 	FontPt float64
+	// Title is the window's title. Empty means progterm.
+	Title string
 	// Tabs are more programs a window with tabs opens beside the first.
 	Tabs []Tab
 }

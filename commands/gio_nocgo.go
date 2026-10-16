@@ -1,4 +1,4 @@
-//go:build !js && !(cgo && unix)
+//go:build unix && !js && !cgo
 
 package commands
 

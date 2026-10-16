@@ -86,9 +86,17 @@ It draws cells only. A progressive program finds no host to ask and draws as in 
 
 The font is `--font "Family Size"`, found with fontconfig (`fc-match`) in its regular, bold, italic and bold italic styles, a missing style drawn with the regular one. Without `--font` it is the desktop terminal's: xfce4-terminal's when it has its own, then GNOME's monospace font, then fontconfig's `monospace`. Go Mono is built in and is used where none of that works. The size is in points at the screen's DPI (`Xft.dpi` on X11), so 10 is the size it is in other terminals. The window opens 100 by 30 cells of that font, fewer where the screen has no room for them.
 
-Shells open as tabs in one window, as in the browser desk. Ctrl+Shift+T or the `+` opens one, Ctrl+Shift+W or a middle click on its tab closes it, and a tab goes when its program exits; the window closes with the last. Click a tab, use Ctrl+Tab and Ctrl+Shift+Tab or Ctrl+PageDown and PageUp, or Alt+1 to Alt+9 to change tabs. A program embedding gioterm opens more at the start with `Options.Tabs`, each running its own command.
+Shells open as tabs in one window, as in the browser desk. Ctrl+Shift+T or the `+` opens one, Ctrl+Shift+W or a middle click on its tab closes it, and a tab goes when its program exits; the window closes with the last. Click a tab, use Ctrl+Tab and Ctrl+Shift+Tab or Ctrl+PageDown and PageUp, or Alt+1 to Alt+9 to change tabs. A program embedding gioterm or x11term opens more at the start with `Options.Tabs`, each running its own command.
 
 `progterm gio --in-process` runs websh in the window's own process, one per tab, each on a pty the process opens itself (`glterm.StartFunc`). It is the shape of an app with no shell binary to start, as on Android, where an app may open ptys but not run files it wrote. The kernel signals no one for Ctrl+C on such a pty, so the window reads the pty's settings and, while they say the kernel would (ISIG on, as while a command runs), passes Ctrl+C and Ctrl+\ to that tab's websh as signals (`console.Options.Signals`). At a prompt or in a full-screen program they stay keys.
+
+## With no cgo: `progterm x11`
+
+```bash
+progterm x11                 # the same flags as gio
+```
+
+The same terminal, tabs and shortcuts as `progterm gio`, in a window on `$DISPLAY` (an X server or XWayland, local or remote). `x11term` speaks the X protocol itself in Go ([xgb](https://github.com/jezek/xgb)), so it needs no cgo and no X libraries, and a `CGO_ENABLED=0` build has it. It sends only the rows of the image that changed, with plain `PutImage`. Keys come through the server's keymap, so a layout's characters type as they do elsewhere; there is no input method or compose key. Copy and paste use the CLIPBOARD and PRIMARY selections, up to what one request holds (no INCR transfers). The font follows `Xft.dpi`.
 
 ## Status
 

@@ -10,6 +10,7 @@ require (
 	github.com/0magnet/xterm-go v0.0.1-0.20261013223808-aa0a32cd702b
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
+	github.com/jezek/xgb v1.3.1
 	github.com/spf13/cobra v1.10.2
 	golang.org/x/image v0.47.0
 	golang.org/x/sys v0.49.0

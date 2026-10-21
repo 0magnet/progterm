@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"gioui.org/io/input"
-	"gioui.org/io/key"
+	"github.com/0magnet/gio/io/input"
+	"github.com/0magnet/gio/io/key"
 )
 
 // TestIMEMirror replays what Gboard sent for "hello" and a correction, and
@@ -61,5 +61,32 @@ func TestIMEMirrorReport(t *testing.T) {
 	}, tag)
 	if got := strings.Join(cmds, ","); got != "snippet añb,selection" {
 		t.Fatalf("report sent %s", got)
+	}
+}
+
+// TestIMEMirrorNewLine checks that ending a line keeps the text, so the
+// input method is not restarted, and that nothing before the line is erased.
+func TestIMEMirrorNewLine(t *testing.T) {
+	var m imeMirror
+	m.edit(key.EditEvent{Range: key.Range{}, Text: "ls"})
+	m.newLine()
+	if string(m.text) != "ls" || m.base != 2 {
+		t.Fatalf("after a line: text %q, base %d", string(m.text), m.base)
+	}
+	erase, typed := m.edit(key.EditEvent{Range: key.Range{Start: 0, End: 2}, Text: "pwd"})
+	if erase != 0 || typed != "pwd" || string(m.text) != "lspwd" {
+		t.Fatalf("an edit before the line erased %d, typed %q, left %q", erase, typed, string(m.text))
+	}
+	m.backspace()
+	m.backspace()
+	m.backspace()
+	m.backspace()
+	if string(m.text) != "ls" {
+		t.Fatalf("backspace past the line left %q", string(m.text))
+	}
+	m.text = make([]rune, imeMax+1)
+	m.newLine()
+	if len(m.text) != 0 || m.base != 0 {
+		t.Fatalf("a long text was kept: %d runes, base %d", len(m.text), m.base)
 	}
 }

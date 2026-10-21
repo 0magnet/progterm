@@ -1,7 +1,5 @@
 eliasnaur.com/font v0.0.0-20230308162249-dd43949cb42d h1:ARo7NCVvN2NdhLlJE9xAbKweuI9L6UgfTbYb0YwPacY=
 eliasnaur.com/font v0.0.0-20230308162249-dd43949cb42d/go.mod h1:OYVuxibdk9OSLX8vAqydtRPP87PyTFcT9uH3MlEGBQA=
-gioui.org v0.10.3 h1:ZiJ4CRvmPQEl2Ee0lK6JQ9WepiA628YmbjibiBVnBTw=
-gioui.org v0.10.3/go.mod h1:x8MAOooc/v4UUaB5o6BS/FpYdxnzh3LBvZlTBmYpnlQ=
 gioui.org/cpu v0.0.0-20210808092351-bfe733dd3334/go.mod h1:A8M0Cn5o+vY5LTMlnRoK3O5kG+rH0kWfJjeKd9QpBmQ=
 gioui.org/shader v1.0.9 h1:XxnqIfmClWpN49kizxH2W0JcCFrrEP4q3jZmNYaltbs=
 gioui.org/shader v1.0.9/go.mod h1:mWdiME581d/kV7/iEhLmUgUK5iZ09XR5XpduXzbePVM=
@@ -13,6 +11,8 @@ github.com/0magnet/calvin v0.0.1-0.20261013221715-da6581155df3 h1:9H++x4esxGkKAn
 github.com/0magnet/calvin v0.0.1-0.20261013221715-da6581155df3/go.mod h1:d4VzbsL3w6CReFvi3Jbv5V/0U6/BQabOl3feTiuVG7A=
 github.com/0magnet/coloredcobra v1.0.4-0.20261012213101-faa6bd8f94c5 h1:EitsijGOC/B/n+ziuxUBkIy9xhgVnmcDZVOW4eE1xGc=
 github.com/0magnet/coloredcobra v1.0.4-0.20261012213101-faa6bd8f94c5/go.mod h1:XOyBWsYWPuG3gboQHaOve/ubY8HaTqCGjJ+791sF5cM=
+github.com/0magnet/gio v0.10.4-0.20261021161935-ee4944b41af4 h1:lcCukqxoP5caTM96HsgGHZcK1IiJoYnRaMGYzJ0vv1M=
+github.com/0magnet/gio v0.10.4-0.20261021161935-ee4944b41af4/go.mod h1:s6Jv+G7IJtoOBtTnLLxtwyECQne5UPUCgu194IcM9L4=
 github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5 h1:phE5/F4rBgh+VE51tU7Y6ZusHkQnECwIBBZHQJf7S5M=
 github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5/go.mod h1:ngQcnC5AqtrdAe3n1WaXvxXU63Jex0A7zKpJ4xQMfmQ=
 github.com/0magnet/u-root v0.16.1-0.20261003214924-44e47b732754 h1:wK2MncQOnEea7yqiOHvv3oD89sc+YC1dAw4zw1o48mQ=

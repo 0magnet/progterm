@@ -6,7 +6,7 @@ require (
 	gioui.org v0.10.3
 	github.com/0magnet/calvin v0.0.1-0.20261013221715-da6581155df3
 	github.com/0magnet/sh/v3 v3.13.2-0.20261004194540-aa2d6e4a31a5
-	github.com/0magnet/websh v0.0.1-0.20261017094725-521a340b022b
+	github.com/0magnet/websh v0.0.1-0.20261020221255-e851bfeabe30
 	github.com/0magnet/xterm-go v0.0.1-0.20261013223808-aa0a32cd702b
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24

@@ -60,3 +60,45 @@ func TestTouch(t *testing.T) {
 		}
 	}
 }
+
+func TestPinch(t *testing.T) {
+	ev := func(k pointer.Kind, id pointer.ID, x float32) pointer.Event {
+		return pointer.Event{Kind: k, Source: pointer.Touch, PointerID: id, Position: f32.Pt(x, 50)}
+	}
+	var p pinch
+	var tc touch
+	zoom := 1.0
+	t0 := time.Unix(0, 0)
+
+	// One finger starts a selection; the pinch leaves it alone.
+	tc.event(ev(pointer.Press, 1, 100), t0, 8)
+	if p.event(ev(pointer.Press, 1, 100), &zoom) {
+		t.Fatal("one finger was taken for a pinch")
+	}
+	tc.event(ev(pointer.Drag, 1, 140), t0, 8)
+
+	// A second finger makes it a pinch, and the selection is let go.
+	if !p.event(ev(pointer.Press, 2, 200), &zoom) {
+		t.Fatal("two fingers were not a pinch")
+	}
+	if got := describe(tc.abort()); got != describe([]glterm.MouseEvent{{X: 100, Y: 50, Button: glterm.ButtonLeft, Action: glterm.Release}}) {
+		t.Errorf("the selection was not let go: %s", got)
+	}
+
+	// Fingers twice as far apart, 100 to 200 becoming 100 to 300.
+	p.event(ev(pointer.Drag, 2, 300), &zoom)
+	if zoom < 1.9 || zoom > 2.1 {
+		t.Errorf("fingers twice as far apart gave zoom %v", zoom)
+	}
+
+	// The pinch keeps the touch until the last finger is up.
+	if !p.event(ev(pointer.Release, 2, 300), &zoom) || !p.event(ev(pointer.Drag, 1, 120), &zoom) {
+		t.Error("the finger left after a pinch was let through")
+	}
+	if !p.event(ev(pointer.Release, 1, 120), &zoom) || p.on {
+		t.Error("the pinch did not end with the last finger")
+	}
+	if p.event(ev(pointer.Press, 3, 10), &zoom) {
+		t.Error("a new touch after the pinch was taken by it")
+	}
+}

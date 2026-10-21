@@ -226,6 +226,19 @@ func TestXvfb(t *testing.T) {
 		return false
 	})
 
+	// Ctrl+= and Ctrl+- scale the font, the terminal following in rows, and
+	// Ctrl+0 puts it back.
+	cellH := func() int { return on(w, func() int { return w.grid.CellH }) }
+	rows := func() int { return on(w, func() int { return w.ts.Active().Term.Sess.Term.Rows() }) }
+	h0, r0 := cellH(), rows()
+	o.press(xkControlL, '=')
+	eventually(t, "a larger font", func() bool { return cellH() > h0 && rows() < r0 })
+	o.press(xkControlL, '-')
+	o.press(xkControlL, '-')
+	eventually(t, "a smaller font", func() bool { return cellH() < h0 && rows() > r0 })
+	o.press(xkControlL, '0')
+	eventually(t, "the font back", func() bool { return cellH() == h0 && rows() == r0 })
+
 	// The terminal's copy, pasted elsewhere.
 	on(w, func() bool { w.clip.Set(false, "from-term"); return true })
 	xproto.ConvertSelection(o.c, o.win, o.at.clipboard, o.at.utf8, o.at.prop, xproto.TimeCurrentTime)

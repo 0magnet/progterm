@@ -124,12 +124,12 @@ func loop(w *app.Window, opt glterm.Options, f glterm.Font) error {
 		resizeTo image.Point
 		resizeAt time.Time
 		bar      *image.RGBA
-		// Each frame draws into the other buffer, so the one Gio still reads
-		// is left alone.
-		bufs  [2]*image.RGBA
-		frame int
-		sized bool // the window was made its size in cells
-		ime   imeMirror
+		canvas   *image.RGBA // the terminal, drawn whole each frame
+		// What Gio is given: the strip and the terminal by row, uploaded only
+		// where they changed.
+		barBands, termBands bands
+		sized               bool // the window was made its size in cells
+		ime                 imeMirror
 	)
 	pending := append([]glterm.Tab{{Shell: opt.Shell, Args: opt.Args, Run: opt.Run}}, opt.Tabs...)
 	defer ts.CloseAll()
@@ -183,7 +183,7 @@ func loop(w *app.Window, opt glterm.Options, f glterm.Font) error {
 				if area == (image.Point{}) || !e.Now.Before(resizeAt) {
 					area = a
 					ts.Resize(grid, area.X, area.Y)
-					bufs = [2]*image.RGBA{}
+					canvas = nil
 				} else {
 					gtx.Execute(op.InvalidateCmd{At: resizeAt})
 				}
@@ -240,26 +240,16 @@ func loop(w *app.Window, opt glterm.Options, f glterm.Font) error {
 			_, bg := grid.Colors()
 			paint.Fill(gtx.Ops, color.NRGBA{R: bg.R, G: bg.G, B: bg.B, A: 0xff})
 			glterm.DrawStrip(bar, grid, &ts, s)
-			paintImage(gtx.Ops, bar, image.Point{})
+			barBands.paint(gtx.Ops, bar, image.Point{}, stripH)
 
-			if bufs[0] == nil {
-				bufs = [2]*image.RGBA{image.NewRGBA(image.Rectangle{Max: area}), image.NewRGBA(image.Rectangle{Max: area})}
+			if canvas == nil {
+				canvas = image.NewRGBA(image.Rectangle{Max: area})
 			}
-			img := bufs[frame%2]
-			frame++
-			ts.Active().Term.Draw(img)
-			paintImage(gtx.Ops, img, image.Pt(0, stripH))
+			ts.Active().Term.Draw(canvas)
+			termBands.paint(gtx.Ops, canvas, image.Pt(0, stripH), grid.CellH)
 			e.Frame(gtx.Ops)
 		}
 	}
-}
-
-// paintImage paints img with its top left at at.
-func paintImage(ops *op.Ops, img *image.RGBA, at image.Point) {
-	defer op.Offset(at).Push(ops).Pop()
-	defer clip.Rect(img.Bounds()).Push(ops).Pop()
-	paint.NewImageOp(img).Add(ops)
-	paint.PaintOp{}.Add(ops)
 }
 
 // handle reads the frame's input: tab shortcuts and the strip for the window,

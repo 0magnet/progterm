@@ -130,6 +130,7 @@ func loop(w *app.Window, opt glterm.Options, f glterm.Font) error {
 		barBands, termBands bands
 		sized               bool // the window was made its size in cells
 		ime                 imeMirror
+		tch                 touch
 	)
 	pending := append([]glterm.Tab{{Shell: opt.Shell, Args: opt.Args, Run: opt.Run}}, opt.Tabs...)
 	defer ts.CloseAll()
@@ -220,7 +221,7 @@ func loop(w *app.Window, opt glterm.Options, f glterm.Font) error {
 				gtx.Execute(key.FocusCmd{Tag: tag})
 				focused = true
 			}
-			handle(gtx.Source, tag, &ts, s, stripH, newTab, cb, &buttons, &ime)
+			handle(gtx.Source, tag, &ts, s, stripH, newTab, cb, &buttons, &ime, &tch, gtx.Now, float32(grid.CellW))
 			whole.Pop()
 
 			if cb.write != nil {
@@ -255,13 +256,15 @@ func loop(w *app.Window, opt glterm.Options, f glterm.Font) error {
 // handle reads the frame's input: tab shortcuts and the strip for the window,
 // the rest for the current tab's terminal, which sees the pointer relative to
 // its own top.
-func handle(src input.Source, tag *int, ts *glterm.Tabs, s glterm.Strip, stripH int, newTab func(), cb *clipboardBridge, held *pointer.Buttons, ime *imeMirror) {
+func handle(src input.Source, tag *int, ts *glterm.Tabs, s glterm.Strip, stripH int, newTab func(), cb *clipboardBridge, held *pointer.Buttons, ime *imeMirror, tch *touch, now time.Time, slop float32) {
 	filters := []event.Filter{
 		key.FocusFilter{Target: tag},
 		// Keys that are not text: named keys, and anything with Ctrl or Alt.
 		// Plain typing comes as EditEvents, which an on-screen keyboard and an
 		// input method also send.
 		key.Filter{Focus: tag, Name: key.NameTab, Optional: key.ModShift | key.ModCtrl},
+		// Back is taken so it never closes the terminal and the shell in it.
+		key.Filter{Focus: tag, Name: key.NameBack},
 		key.Filter{Focus: tag, Name: "", Required: key.ModCtrl, Optional: key.ModShift | key.ModAlt},
 		key.Filter{Focus: tag, Name: "", Required: key.ModAlt, Optional: key.ModShift},
 		pointer.Filter{
@@ -278,10 +281,13 @@ func handle(src input.Source, tag *int, ts *glterm.Tabs, s glterm.Strip, stripH 
 		key.NameF7, key.NameF8, key.NameF9, key.NameF10, key.NameF11, key.NameF12} {
 		filters = append(filters, key.Filter{Focus: tag, Name: n, Optional: key.ModShift | key.ModCtrl | key.ModAlt})
 	}
+	for _, me := range tch.expire(now) {
+		ts.Active().Term.Mouse(me)
+	}
 	for {
 		ev, ok := src.Event(filters...)
 		if !ok {
-			return
+			break
 		}
 		t := ts.Active()
 		switch ev := ev.(type) {
@@ -296,6 +302,9 @@ func handle(src input.Source, tag *int, ts *glterm.Tabs, s glterm.Strip, stripH 
 			ime.report(src.Execute, tag)
 		case key.Event:
 			if ev.State != key.Press {
+				continue
+			}
+			if ev.Name == key.NameBack {
 				continue
 			}
 			if ev.Name == key.NameDeleteBackward {
@@ -320,6 +329,13 @@ func handle(src input.Source, tag *int, ts *glterm.Tabs, s glterm.Strip, stripH 
 				continue
 			}
 			ev.Position.Y -= float32(stripH)
+			if ev.Source == pointer.Touch {
+				for _, me := range tch.event(ev, now, slop) {
+					t.Term.Mouse(me)
+				}
+				*held = ev.Buttons
+				continue
+			}
 			for _, me := range termMouse(ev, held) {
 				t.Term.Mouse(me)
 			}
@@ -334,6 +350,9 @@ func handle(src input.Source, tag *int, ts *glterm.Tabs, s glterm.Strip, stripH 
 				}
 			}
 		}
+	}
+	if at, ok := tch.due(); ok {
+		src.Execute(op.InvalidateCmd{At: at})
 	}
 }
 

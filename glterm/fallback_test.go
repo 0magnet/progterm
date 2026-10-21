@@ -35,3 +35,23 @@ func inked(m *image.Alpha) bool {
 	}
 	return false
 }
+
+// TestKanaWithoutAFallbackFont: with no fallback font to find, as on Android,
+// half-width katakana are still drawn, from kana.gz, and not as Go Mono's box.
+func TestKanaWithoutAFallbackFont(t *testing.T) {
+	g, err := NewGrid(16)
+	if err != nil {
+		t.Fatal(err)
+	}
+	g.fallbackDone, g.fallbackFace = true, nil
+	kana, box := g.glyph("ｱ", 0, 1), g.glyph("一", 0, 1)
+	if !inked(kana) {
+		t.Fatal("ｱ left its cell empty")
+	}
+	if string(kana.Pix) == string(box.Pix) {
+		t.Fatal("ｱ was drawn as the box for a missing glyph")
+	}
+	if kanaBitmap('ﾝ') == nil || kanaBitmap('A') != nil {
+		t.Error("kana.gz does not cover exactly U+FF61 to U+FF9F")
+	}
+}

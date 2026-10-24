@@ -6,8 +6,8 @@ import (
 )
 
 // TestFallbackDrawsWhatTheFontLacks: Go Mono has no half-width katakana, the
-// glyphs of a Matrix rain, so the cell must come from the fallback font and
-// not be drawn as a box.
+// glyphs of a Matrix rain, so the cell comes from the fallback font when it has
+// them, or else from kana.gz, and is not drawn as a box.
 func TestFallbackDrawsWhatTheFontLacks(t *testing.T) {
 	if fallback() == nil {
 		t.Skip("no fallback font on this machine")
@@ -16,14 +16,21 @@ func TestFallbackDrawsWhatTheFontLacks(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if g.faceFor("ｱ", 0) == g.faces[0] {
-		t.Fatal("ｱ was drawn with Go Mono, which has no glyph for it")
+	f := g.faceFor("ｱ", 0)
+	if fb := g.fallbackFace; fb != nil {
+		if _, ok := fb.GlyphAdvance('ｱ'); ok && f == g.faces[0] {
+			t.Fatal("ｱ was drawn with Go Mono though the fallback font has it")
+		}
 	}
 	if g.faceFor("A", 0) != g.faces[0] {
 		t.Error("A was not drawn with the terminal's own font")
 	}
-	if m := g.glyph("ｱ", 0, 1); m.Bounds() != image.Rect(0, 0, g.CellW, g.CellH) || !inked(m) {
+	m := g.glyph("ｱ", 0, 1)
+	if m.Bounds() != image.Rect(0, 0, g.CellW, g.CellH) || !inked(m) {
 		t.Error("ｱ left its cell empty")
+	}
+	if string(m.Pix) == string(g.glyph("一", 0, 1).Pix) {
+		t.Error("ｱ was drawn as the box for a missing glyph")
 	}
 }
 

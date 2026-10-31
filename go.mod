@@ -6,7 +6,7 @@ require (
 	github.com/0magnet/calvin v0.0.1-0.20261013221715-da6581155df3
 	github.com/0magnet/gio v0.10.4-0.20261021172429-4a8790050951
 	github.com/0magnet/sh/v3 v3.13.2-0.20261024150911-145e01c63128
-	github.com/0magnet/websh v0.0.1-0.20261030113045-0ade64854f3a
+	github.com/0magnet/websh v0.0.1-0.20261030114348-e83472c01e1a
 	github.com/0magnet/xterm-go v0.0.1-0.20261028211146-6bd2303b2f23
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24

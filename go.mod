@@ -6,7 +6,7 @@ require (
 	github.com/0magnet/calvin v0.0.1-0.20261106130306-95511d0b3e30
 	github.com/0magnet/gio v0.10.4-0.20261021172429-4a8790050951
 	github.com/0magnet/sh/v3 v3.13.2-0.20261024150911-145e01c63128
-	github.com/0magnet/websh v0.0.1-0.20261106130811-12119f3c57f3
+	github.com/0magnet/websh v0.0.1-0.20261106131606-1973f8bee280
 	github.com/0magnet/xterm-go v0.0.1-0.20261102175652-6023ed24df89
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
@@ -37,7 +37,7 @@ require (
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mattn/go-runewidth v0.0.31 // indirect
 	github.com/spf13/pflag v1.1.0 // indirect
-	golang.org/x/exp/shiny v0.0.0-20261106112924-d498a4c2cc9a // indirect
+	golang.org/x/exp/shiny v0.0.0-20261106192419-47ce03d25ef0 // indirect
 	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 )

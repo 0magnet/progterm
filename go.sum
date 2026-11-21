@@ -17,8 +17,8 @@ github.com/0magnet/sh/v3 v3.13.2-0.20261024150911-145e01c63128 h1:ABhMGezW+gg1dk
 github.com/0magnet/sh/v3 v3.13.2-0.20261024150911-145e01c63128/go.mod h1:lkiwBghlcHik7Hli9029uD/KoJSNyBOUCCYd02IQHi4=
 github.com/0magnet/u-root v0.16.1-0.20261003214924-44e47b732754 h1:wK2MncQOnEea7yqiOHvv3oD89sc+YC1dAw4zw1o48mQ=
 github.com/0magnet/u-root v0.16.1-0.20261003214924-44e47b732754/go.mod h1:9N1kqBjNdAUT/pfrWKyty4zS5ZQgG1OvsTmhdcpAWB0=
-github.com/0magnet/websh v0.0.1-0.20261120141207-935dcca5bcac h1:EXjvSVYFal/CL/nSLMsEJ2NM8iQLISMwCocOdV2LTIM=
-github.com/0magnet/websh v0.0.1-0.20261120141207-935dcca5bcac/go.mod h1:FYz+uGo5GKxUEAFx/QbxSRKTuYq0XxcEnRHWHQfuGqA=
+github.com/0magnet/websh v0.0.1-0.20261120142007-c9b520238fe1 h1:XfdMvDrzVcKi0Zf/ilENqUmD9IMH0FsELkK6HSy9054=
+github.com/0magnet/websh v0.0.1-0.20261120142007-c9b520238fe1/go.mod h1:FYz+uGo5GKxUEAFx/QbxSRKTuYq0XxcEnRHWHQfuGqA=
 github.com/0magnet/winbox-go v0.0.1-0.20261109140257-4c5c0e948cd6 h1:Acu0hHryXMCsbLAQz48GNFNyVTPK5Wa/o2IUTIJVDYk=
 github.com/0magnet/winbox-go v0.0.1-0.20261109140257-4c5c0e948cd6/go.mod h1:KQ2aHYc6RnzGCCkgiVJC6qlGDMaSVs3VEEvTfsqJMEk=
 github.com/0magnet/xterm-go v0.0.1-0.20261113221359-36e33e634de1 h1:H/YtzIakC9Unr/jr+ak/Jmvl2nInlfNhdl8JYAMFChA=
@@ -75,8 +75,8 @@ github.com/spf13/pflag v1.1.0/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An
 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
 golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa h1:QSyA8ishJCyT21kER9KwNt0b7BM3iRK4x9QXhjN5Fdk=
 golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa/go.mod h1:zeBbvyFKDaLwa7CH/zI8KXt7gTl14SF7sO08Pl5jBCM=
-golang.org/x/exp/shiny v0.0.0-20261120130654-b6de8d37927a h1:9A9FUqvD0dfxrxOa3Bkufz6jJXzqBvcWt7iDltAC9Fc=
-golang.org/x/exp/shiny v0.0.0-20261120130654-b6de8d37927a/go.mod h1:PlFR9StaEp5crRgynMOICwNY6fDmY2YauAW8l0SqiTY=
+golang.org/x/exp/shiny v0.0.0-20261121133325-6d57732a552b h1:GvhGP42mARb9e7aXYzvVIZQXeJ7RAY2g8VuWcFot8Eo=
+golang.org/x/exp/shiny v0.0.0-20261121133325-6d57732a552b/go.mod h1:PlFR9StaEp5crRgynMOICwNY6fDmY2YauAW8l0SqiTY=
 golang.org/x/image v0.48.0 h1:1AvuPcuoOTJpA7s4VZ5umrb90T3So0rkB/bSGmxkxik=
 golang.org/x/image v0.48.0/go.mod h1:mmtg64iqJKGqEgy+r13dfybl85tmxUd2lMnmaiSdWYY=
 golang.org/x/net v0.63.0 h1:HCoTmNh9EpD1PpK8gBNFY4gcTY4N+KQEO8ylfIKqFJ0=

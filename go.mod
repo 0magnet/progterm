@@ -37,7 +37,7 @@ require (
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mattn/go-runewidth v0.0.31 // indirect
 	github.com/spf13/pflag v1.1.0 // indirect
-	golang.org/x/exp/shiny v0.0.0-20261121133325-6d57732a552b // indirect
+	golang.org/x/exp/shiny v0.0.0-20261121134650-e1094eeca1b5 // indirect
 	golang.org/x/net v0.63.0 // indirect
 	golang.org/x/text v0.44.0 // indirect
 )

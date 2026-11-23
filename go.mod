@@ -3,11 +3,11 @@ module github.com/0magnet/progterm
 go 1.27.1
 
 require (
-	github.com/0magnet/calvin v0.0.1-0.20261109140133-887794fc87eb
+	github.com/0magnet/calvin v0.0.1-0.20261123113739-17ec6c31723c
 	github.com/0magnet/gio v0.10.4-0.20261021172429-4a8790050951
 	github.com/0magnet/sh/v3 v3.13.2-0.20261024150911-145e01c63128
-	github.com/0magnet/websh v0.0.1-0.20261120142007-c9b520238fe1
-	github.com/0magnet/xterm-go v0.0.1-0.20261113221359-36e33e634de1
+	github.com/0magnet/websh v0.0.1-0.20261123161609-45d906fd391f
+	github.com/0magnet/xterm-go v0.0.1-0.20261123110635-ef9c274ca8f7
 	github.com/coder/websocket v1.8.15
 	github.com/creack/pty v1.1.24
 	github.com/jezek/xgb v1.3.1
@@ -23,7 +23,7 @@ require (
 	github.com/0magnet/bottle v0.0.1-0.20261028202309-2b922f28f74e // indirect
 	github.com/0magnet/coloredcobra v1.0.4-0.20261012213101-faa6bd8f94c5 // indirect
 	github.com/0magnet/u-root v0.16.1-0.20261003214924-44e47b732754 // indirect
-	github.com/0magnet/winbox-go v0.0.1-0.20261109140257-4c5c0e948cd6 // indirect
+	github.com/0magnet/winbox-go v0.0.1-0.20261123161147-35767eea845c // indirect
 	github.com/benhoyt/goawk v1.32.0 // indirect
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/dustin/go-humanize v1.1.0 // indirect

@@ -1,0 +1,2 @@
+gioterm/gioterm.go:clipboardBridge.Get
+x11term/clip.go:clipboard.Get
